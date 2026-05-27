@@ -1,0 +1,24 @@
+# OSCC Retro — RI cannabis cultivator product locator
+# Extends the shared stack: docker compose -f ../docker-compose.yml -f docker-compose.yml up -d
+
+services:
+  oscc-app:
+    image: ghcr.io/mountain-dr3w/oscc:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:4321:4321"
+    environment:
+      DATABASE_URL: ${OSCC_DATABASE_URL}
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    mem_limit: 512m
+    cpus: 1.0
+    networks:
+      - default
+
+networks:
+  default:
+    name: infra
+    external: true

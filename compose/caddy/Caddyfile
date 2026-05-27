@@ -5,7 +5,6 @@
     reverse_proxy localhost:3001
 }
 
-# Future: frontend
-# app.{$DOMAIN} {
-#     reverse_proxy localhost:8080
-# }
+oscc.{$DOMAIN} {
+    reverse_proxy localhost:4321
+}
