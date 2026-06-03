@@ -1,0 +1,23 @@
+# drew-ux — Drew McFarland's portfolio (static Vite SPA served by Caddy)
+# Extends the shared stack: docker compose -f ../docker-compose.yml -f docker-compose.yml up -d
+
+services:
+  drew-ux-app:
+    image: ghcr.io/mountain-dr3w/drew-ux:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8082:8080"
+    mem_limit: 128m
+    cpus: 0.5
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - default
+
+networks:
+  default:
+    name: infra
+    external: true

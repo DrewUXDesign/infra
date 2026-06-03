@@ -137,3 +137,31 @@ docker system prune --filter "until=168h" -af
 cd /opt/infra
 git pull origin main
 ```
+
+### Provision a new first-party app (one-time, as root)
+
+A new app (e.g. `drew-ux` → `drewux.{$DOMAIN}`) ships its own `compose/<app>/docker-compose.yml`
+and a Caddy block in this repo. CI builds/pushes the image and can `docker compose up` the
+service as the `deploy` user, but adding the subdomain to Caddy needs root once:
+
+```bash
+cd /opt/infra
+git pull origin main
+cp compose/caddy/Caddyfile /etc/caddy/Caddyfile
+caddy validate --config /etc/caddy/Caddyfile   # never reload an invalid config
+systemctl reload caddy
+```
+
+Then, in the app repo (e.g. `drew-ux`) Settings → Secrets and variables → Actions:
+set secrets `VPS_HOST`, `VPS_USER` (`deploy`), `DEPLOY_SSH_KEY`, and variable
+`DEPLOY_ENABLED=true`. The next push deploys automatically.
+
+### Manage drew-ux
+
+```bash
+cd /opt/infra
+# start / update
+IMAGE_TAG=sha-xxxxxxx docker compose -f compose/docker-compose.yml -f compose/drew-ux/docker-compose.yml up -d drew-ux-app
+# logs
+docker compose -f compose/docker-compose.yml -f compose/drew-ux/docker-compose.yml logs -f drew-ux-app
+```

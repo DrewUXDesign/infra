@@ -8,3 +8,7 @@
 oscc.{$DOMAIN} {
     reverse_proxy localhost:4321
 }
+
+drewux.{$DOMAIN} {
+    reverse_proxy localhost:8082
+}
